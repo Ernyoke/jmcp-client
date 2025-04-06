@@ -1,12 +1,19 @@
 package dev.ervinszilagyi.io;
 
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.text.TextContentRenderer;
+import com.vladsch.flexmark.formatter.Formatter;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
 
 import java.io.Console;
 
 public class ConsoleCli implements Cli {
+    static {
+        FORMAT_OPTIONS.set(Parser.EXTENSIONS, Parser.EXTENSIONS.get(OPTIONS));
+    }
+
+    static final Parser PARSER = Parser.builder(OPTIONS).build();
+    static final Formatter RENDERER = Formatter.builder(FORMAT_OPTIONS).build();
+
     private final Console console;
 
     public ConsoleCli(Console console) {
@@ -19,7 +26,9 @@ public class ConsoleCli implements Cli {
     }
 
     @Override
-    public void printLine(String line) {
-        this.console.printf("%s\n", line);
+    public void printMdFormatted(String line) {
+        Node document = PARSER.parse(line);
+        String commonmark = RENDERER.render(document);
+        this.console.printf("%s\n", commonmark);
     }
 }

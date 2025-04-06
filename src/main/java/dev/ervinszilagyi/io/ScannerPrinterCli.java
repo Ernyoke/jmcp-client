@@ -1,10 +1,8 @@
 package dev.ervinszilagyi.io;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.text.TextContentRenderer;
+import com.vladsch.flexmark.formatter.Formatter;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
 
 import java.io.PrintStream;
 import java.util.Scanner;
@@ -12,6 +10,13 @@ import java.util.Scanner;
 public class ScannerPrinterCli implements Cli {
     private final Scanner scanner;
     private final PrintStream printStream;
+
+    static {
+        FORMAT_OPTIONS.set(Parser.EXTENSIONS, Parser.EXTENSIONS.get(OPTIONS));
+    }
+
+    static final Parser PARSER = Parser.builder(OPTIONS).build();
+    static final Formatter RENDERER = Formatter.builder(FORMAT_OPTIONS).build();
 
     public ScannerPrinterCli() {
         this.scanner = new Scanner(System.in);
@@ -23,10 +28,9 @@ public class ScannerPrinterCli implements Cli {
         return this.scanner.nextLine();
     }
 
-    public void printLine(String line) {
-        Parser parser = Parser.builder().build();
-        Node document = parser.parse(line);
-        TextContentRenderer renderer = TextContentRenderer.builder().build();
-        this.printStream.println(renderer.render(document));
+    public void printMdFormatted(String line) {
+        Node document = PARSER.parse(line);
+        String commonmark = RENDERER.render(document);
+        printStream.println(commonmark);
     }
 }

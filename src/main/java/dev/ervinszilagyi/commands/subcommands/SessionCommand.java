@@ -2,7 +2,6 @@ package dev.ervinszilagyi.commands.subcommands;
 
 import dev.ervinszilagyi.Bot;
 import dev.ervinszilagyi.io.Cli;
-import dev.ervinszilagyi.io.ScannerPrinterCli;
 import jakarta.inject.Inject;
 import picocli.CommandLine;
 
@@ -32,7 +31,7 @@ public class SessionCommand implements Callable<Integer> {
             LocalDate now = LocalDate.now();
 
             String answer = this.bot.chat(input, now.toString());
-            this.cli.printLine(answer);
+            this.cli.printMdFormatted(answer);
         }
 
         return 0;
